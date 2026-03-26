@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vision</title>
+
+    <link rel="icon" type="image/x-icon" href="fav.png">
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="image-slider">
+        <div class="slide" id="s1" style="background-image: url('image-1.jpg');"></div>
+        <div class="slide" id="s2" style="background-image: url('image-2.jpg');"></div>
+        <div class="slide" id="s3" style="background-image: url('image-3.jpg');"></div>
+        <div class="slide" id="s4" style="background-image: url('image-4.jpg');"></div>
+    </div>
+
+    <div id="text-bg-overlay"></div>
+    <div id="signature" style="text-align: center;">Iqra</div>
+
+    <div id="start-overlay">
+        <div class="play-btn" id="playBtn"></div>
+    </div>
+
+    <div class="content-box">
+        <h1 class="fade-text" id="mainTxt">TRUST YOURSELF</h1>
+        <p class="slide-text" id="subTxt">Every step counts toward your goal.</p>
+    </div>
+
+    <audio id="bgMusic" controls preload="auto">
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        const audio = document.getElementById('bgMusic');
+        const overlay = document.getElementById('start-overlay');
+        const mainTxt = document.getElementById('mainTxt');
+        const subTxt = document.getElementById('subTxt');
+        const bgOverlay = document.getElementById('text-bg-overlay');
+        const sig = document.getElementById('signature');
+        const slides = [document.getElementById('s1'), document.getElementById('s2'), document.getElementById('s3'), document.getElementById('s4')];
+
+        let isPlaying = false;
+        let animationInterval;
+
+        function sync() {
+            const time = audio.currentTime;
+
+            // Step 1: Handle Intro Text (0-6s)
+            if (time < 6) {
+                mainTxt.classList.add('show'); subTxt.classList.add('show');
+                bgOverlay.classList.remove('hide');
+                slides.forEach(s => s.classList.remove('show'));
+            }
+            // Step 2: Image 1 (6-11s)
+            else if (time >= 6 && time < 11) {
+                mainTxt.classList.remove('show'); subTxt.classList.remove('show');
+                bgOverlay.classList.add('hide');
+                slides[0].classList.add('show'); slides[1].classList.remove('show');
+            }
+            // Step 3: Image 2 (11-16s)
+            else if (time >= 11 && time < 16) {
+                slides[0].classList.remove('show'); slides[1].classList.add('show'); slides[2].classList.remove('show');
+            }
+            // Step 4: Image 3 (16-21s)
+            else if (time >= 16 && time < 21) {
+                slides[1].classList.remove('show'); slides[2].classList.add('show'); slides[3].classList.remove('show');
+                sig.classList.remove('show');
+            }
+            // Step 5: Image 4 + Signature (21s+)
+            else if (time >= 21) {
+                slides[2].classList.remove('show'); slides[3].classList.add('show');
+                sig.classList.add('show');
+            }
+        }
+
+        function togglePlay() {
+            if (!isPlaying) {
+                // Failsafe to start audio
+                audio.play().then(() => {
+                    overlay.style.display = 'none';
+                    animationInterval = setInterval(sync, 100);
+                    isPlaying = true;
+                }).catch(e => {
+                    alert("Please click the play button directly to start music.");
+                });
+            } else {
+                audio.pause();
+                overlay.style.display = 'flex';
+                clearInterval(animationInterval);
+                isPlaying = false;
+            }
+        }
+
+        document.getElementById('playBtn').addEventListener('click', (e) => { e.stopPropagation(); togglePlay(); });
+        overlay.addEventListener('click', togglePlay);
+
+        audio.onended = () => {
+            clearInterval(animationInterval);
+            overlay.style.display = 'flex';
+            isPlaying = false;
+            audio.currentTime = 0;
+        };
+    </script>
+</body>
+
+</html>

@@ -80,7 +80,7 @@
 
         function togglePlay() {
             if (!isPlaying) {
-                // Failsafe to start audio
+                
                 audio.play().then(() => {
                     overlay.style.display = 'none';
                     animationInterval = setInterval(sync, 100);
